@@ -65,7 +65,7 @@ class LoginActivity : Activity() {
         mAuthService = createNewAuthorizationService()
         initialConfiguration.discoveryUri?.let {
             fetchEndpointsFromDiscoveryUrl(it)
-        }?: kotlin.run {
+        } ?: kotlin.run {
             handleErrorAndFinishActivity(Exception(Constants.DISCOVERY_URL_NULL))
         }
     }
@@ -141,48 +141,46 @@ class LoginActivity : Activity() {
     }
 
     private fun loadAuthorizationEndpointInWebView(authUrl: String) {
-        runOnUiThread{
+        runOnUiThread {
             webView.loadUrl(authUrl)
         }
     }
 
     inner class MyWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            synchronized(this) {
-                url?.let {
-                    if (checkIfUrlIsRedirectUrl(it)) {
-                        if (_mLogoutRequest != null) {
-                            handleLogoutRedirectUrl(it)
-                        } else {
-                            handleLoginRedirectUrl(it)
-                        }
+            url?.let {
+                if (checkIfUrlIsRedirectUrl(it)) {
+                    if (_mLogoutRequest != null) {
+                        handleLogoutRedirectUrl(it)
                     } else {
-                        when {
-                            checkIfUrlIsAuthorizationUrl(it) -> {
-                                inputUserCredentialsAndClickSignIn(
-                                    ClientInfo.getAuthSDK().getMobileNumber(),
-                                    ClientInfo.getAuthSDK().getOtp()
-                                )
-                            }
-                            checkIfUrlIsAuthorizationFailUrl(it) -> {
-                                handleErrorAndFinishActivity(
-                                    Exception(Constants.AUTHORIZATION_FAIL)
-                                )
-                            }
-                            else -> {
-                                handleErrorAndFinishActivity(
-                                    Exception(Constants.UNKNOWN_URL + url)
-                                )
-                            }
+                        handleLoginRedirectUrl(it)
+                    }
+                } else {
+                    when {
+                        checkIfUrlIsAuthorizationUrl(it) -> {
+                            inputUserCredentialsAndClickSignIn(
+                                ClientInfo.getAuthSDK().getMobileNumber(),
+                                ClientInfo.getAuthSDK().getOtp()
+                            )
+                        }
+                        checkIfUrlIsAuthorizationFailUrl(it) -> {
+                            handleErrorAndFinishActivity(
+                                Exception(Constants.AUTHORIZATION_FAIL)
+                            )
+                        }
+                        else -> {
+                            handleErrorAndFinishActivity(
+                                Exception(Constants.UNKNOWN_URL + url)
+                            )
                         }
                     }
-                }?: kotlin.run {
-                    handleErrorAndFinishActivity(
-                        Exception(Constants.URL_NULL)
-                    )
                 }
-                super.onPageStarted(view, url, favicon)
+            } ?: kotlin.run {
+                handleErrorAndFinishActivity(
+                    Exception(Constants.URL_NULL)
+                )
             }
+            super.onPageStarted(view, url, favicon)
         }
     }
 
@@ -350,12 +348,12 @@ class LoginActivity : Activity() {
         }
     }
 
-    private fun handleTokenSuccess(tokenInfo: TokenInfo){
+    private fun handleTokenSuccess(tokenInfo: TokenInfo) {
         ClientInfo.getAuthSDK().getLoginCallback().onSuccess(tokenInfo)
         finish()
     }
 
-    private fun handleLogoutSuccess(){
+    private fun handleLogoutSuccess() {
         ClientInfo.getAuthSDK().getLogoutCallback().onLogoutSuccess()
         finish()
     }
