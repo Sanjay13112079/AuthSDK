@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.dehaatauthsdk.DeHaatAuth.OperationState.*
@@ -54,9 +56,23 @@ class LoginActivity : Activity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun WebView.enableWebViewSettings() {
         settings.apply {
+            loadsImagesAutomatically = true
+            useWideViewPort = true
+            allowContentAccess = true
+            allowFileAccess = true
+            databaseEnabled = true
+            domStorageEnabled = true
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            webView.keepScreenOn = true
+            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
             javaScriptEnabled = true
             useWideViewPort = true
             loadWithOverviewMode = true
+            pluginState = WebSettings.PluginState.ON
+            setAppCacheEnabled(true)
         }
     }
 
