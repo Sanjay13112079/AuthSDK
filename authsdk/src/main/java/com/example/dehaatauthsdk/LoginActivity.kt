@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.dehaatauthsdk.DeHaatAuth.OperationState.*
@@ -41,22 +43,40 @@ class LoginActivity : Activity() {
     }
 
     private fun initialize() {
-        _webView = WebView(this).apply {
-            webViewClient = MyWebViewClient()
-            enableWebViewSettings()
-        }
+        setUpWebView()
         _initialConfiguration = Configuration.getInstance(applicationContext)
         job = CoroutineScope((IO)).launch {
             startAuthorizationServiceCreation()
         }
     }
 
+    private fun setUpWebView() {
+        _webView = WebView(this).apply {
+            webViewClient = MyWebViewClient()
+            enableWebViewSettings()
+        }
+        _webView?.keepScreenOn = true
+        _webView?.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private fun WebView.enableWebViewSettings() {
         settings.apply {
+            loadsImagesAutomatically = true
+            useWideViewPort = true
+            allowContentAccess = true
+            allowFileAccess = true
+            databaseEnabled = true
+            domStorageEnabled = true
+            javaScriptEnabled = true
+            loadWithOverviewMode = true
+            useWideViewPort = true
+            layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
             javaScriptEnabled = true
             useWideViewPort = true
             loadWithOverviewMode = true
+            pluginState = WebSettings.PluginState.ON
+            setAppCacheEnabled(true)
         }
     }
 
@@ -312,10 +332,6 @@ class LoginActivity : Activity() {
                 .build()
 
         runOnUiThread {
-            _webView = WebView(this@LoginActivity).apply {
-                webViewClient = MyWebViewClient()
-                enableWebViewSettings()
-            }
             webView.loadUrl(mLogoutRequest.toUri().toString())
         }
     }
