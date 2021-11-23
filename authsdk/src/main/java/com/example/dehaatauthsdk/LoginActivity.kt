@@ -3,7 +3,6 @@ package com.example.dehaatauthsdk
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -167,7 +166,7 @@ class LoginActivity : Activity() {
     }
 
     inner class MyWebViewClient : WebViewClient() {
-        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+        override fun onPageFinished(view: WebView?, url: String?) {
             url?.let {
                 if (checkIfUrlIsRedirectUrl(it)) {
                     if (_mLogoutRequest != null) {
@@ -200,7 +199,7 @@ class LoginActivity : Activity() {
                     Exception(Constants.URL_NULL)
                 )
             }
-            super.onPageStarted(view, url, favicon)
+            super.onPageFinished(view, url)
         }
     }
 
