@@ -3,8 +3,11 @@ package com.example.dehaatauthsdk
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -35,6 +38,9 @@ class LoginActivity : Activity() {
     private val webView get() = _webView!!
 
     private lateinit var job: Job
+    private var isPageLoaded = false
+    private lateinit var timeoutHandler: Handler
+    private val TIMEOUT = 1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +49,7 @@ class LoginActivity : Activity() {
 
     private fun initialize() {
         setUpWebView()
+        timeoutHandler = Handler(Looper.getMainLooper())
         _initialConfiguration = Configuration.getInstance(applicationContext)
         job = CoroutineScope((IO)).launch {
             startAuthorizationServiceCreation()
@@ -166,7 +173,19 @@ class LoginActivity : Activity() {
     }
 
     inner class MyWebViewClient : WebViewClient() {
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            super.onPageStarted(view, url, favicon)
+            val run = Runnable { // Do nothing if we already have an error
+                // Dismiss any current alerts and progress
+                handleErrorAndFinishActivity()
+                if (!isPageLoaded) {
+                    handleErrorAndFinishActivity(Exception(Constants.TIME_OUT))
+                }
+            }
+            timeoutHandler.postDelayed(run, TIMEOUT * 1000)
+        }
         override fun onPageFinished(view: WebView?, url: String?) {
+            isPageLoaded = true
             url?.let {
                 if (checkIfUrlIsRedirectUrl(it)) {
                     if (_mLogoutRequest != null) {
@@ -373,7 +392,7 @@ class LoginActivity : Activity() {
         finish()
     }
 
-    private fun handleErrorAndFinishActivity(exception: Exception?) {
+    private fun handleErrorAndFinishActivity(exception: Exception? = null) {
         when (ClientInfo.getAuthSDK().getOperationState()) {
             EMAIL_LOGIN, MOBILE_LOGIN, RENEW_TOKEN -> {
                 ClientInfo.getAuthSDK().getLoginCallback()
