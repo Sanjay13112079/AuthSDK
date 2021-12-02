@@ -179,6 +179,7 @@ class LoginActivity : Activity() {
                 // Dismiss any current alerts and progress
                 handleErrorAndFinishActivity()
                 if (!isPageLoaded) {
+                    webView.destroy()
                     handleErrorAndFinishActivity(Exception(Constants.TIME_OUT))
                 }
             }
