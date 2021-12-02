@@ -168,22 +168,16 @@ class LoginActivity : Activity() {
 
     private fun loadAuthorizationEndpointInWebView(authUrl: String) {
         runOnUiThread {
-            webView.loadUrl(authUrl)
+            loadUrl(authUrl)
         }
     }
 
     inner class MyWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
-            val run = Runnable { // Do nothing if we already have an error
-                // Dismiss any current alerts and progress
-                if (!isPageLoaded) {
-                    webView.destroy()
-                    handleErrorAndFinishActivity(Exception(Constants.TIME_OUT))
-                }
-            }
-            timeoutHandler.postDelayed(run, TIMEOUT * 1000)
+            isPageLoaded = false
         }
+
         override fun onPageFinished(view: WebView?, url: String?) {
             isPageLoaded = true
             url?.let {
@@ -232,7 +226,7 @@ class LoginActivity : Activity() {
         url.contains(Constants.AUTHORIZATION_FAIL_URL)
 
     private fun inputUserCredentialsAndClickSignIn(userName: String, password: String) =
-        webView.loadUrl(
+        loadUrl(
             "javascript: {" +
                     "document.getElementById('mobile').value = '" + userName + "';" +
                     "document.getElementById('code').value = '" + password + "';" +
@@ -350,7 +344,7 @@ class LoginActivity : Activity() {
                 .build()
 
         runOnUiThread {
-            webView.loadUrl(mLogoutRequest.toUri().toString())
+            loadUrl(mLogoutRequest.toUri().toString())
         }
     }
 
@@ -382,8 +376,16 @@ class LoginActivity : Activity() {
         }
     }
 
-    private fun loadUrl(url: String){
-
+    private fun loadUrl(url: String) {
+        webView.loadUrl(url)
+        val run = Runnable { // Do nothing if we already have an error
+            // Dismiss any current alerts and progress
+            if (!isPageLoaded) {
+                webView.destroy()
+                handleErrorAndFinishActivity(Exception(Constants.TIME_OUT))
+            }
+        }
+        timeoutHandler.postDelayed(run, TIMEOUT * 1000)
     }
 
     private fun handleTokenSuccess(tokenInfo: TokenInfo) {
