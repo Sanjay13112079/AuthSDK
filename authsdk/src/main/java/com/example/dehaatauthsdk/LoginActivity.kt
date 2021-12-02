@@ -177,7 +177,6 @@ class LoginActivity : Activity() {
             super.onPageStarted(view, url, favicon)
             val run = Runnable { // Do nothing if we already have an error
                 // Dismiss any current alerts and progress
-                handleErrorAndFinishActivity()
                 if (!isPageLoaded) {
                     webView.destroy()
                     handleErrorAndFinishActivity(Exception(Constants.TIME_OUT))
@@ -381,6 +380,10 @@ class LoginActivity : Activity() {
         } else {
             handleErrorAndFinishActivity(Exception("email login response is null"))
         }
+    }
+
+    private fun loadUrl(url: String){
+
     }
 
     private fun handleTokenSuccess(tokenInfo: TokenInfo) {
