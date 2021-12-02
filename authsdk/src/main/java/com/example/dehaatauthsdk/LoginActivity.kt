@@ -40,7 +40,7 @@ class LoginActivity : Activity() {
     private lateinit var job: Job
     private var isPageLoaded = false
     private lateinit var timeoutHandler: Handler
-    private val TIMEOUT = 1L
+    private val TIMEOUT = 30L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
