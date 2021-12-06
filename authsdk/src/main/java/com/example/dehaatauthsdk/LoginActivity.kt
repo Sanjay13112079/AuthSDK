@@ -136,7 +136,7 @@ class LoginActivity : Activity() {
                     clientId,
                     ResponseTypeValues.CODE,
                     initialConfiguration.redirectUri
-                ).setScope(initialConfiguration.scope).setLoginHint(Constants.ENTER_EMAIL).build()
+                ).setScope(initialConfiguration.scope).setPrompt("login").build()
             chooseOperationAndProcess()
         } ?: kotlin.run {
             handleErrorAndFinishActivity(Exception(Constants.CLIENT_ID_NULL))
