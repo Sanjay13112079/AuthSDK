@@ -75,11 +75,7 @@ class LoginActivity : Activity() {
             databaseEnabled = true
             domStorageEnabled = true
             javaScriptEnabled = true
-            loadWithOverviewMode = true
-            useWideViewPort = true
             layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
-            javaScriptEnabled = true
-            useWideViewPort = true
             loadWithOverviewMode = true
             pluginState = WebSettings.PluginState.ON
             setAppCacheEnabled(true)
@@ -136,7 +132,7 @@ class LoginActivity : Activity() {
                     clientId,
                     ResponseTypeValues.CODE,
                     initialConfiguration.redirectUri
-                ).setScope(initialConfiguration.scope).setLoginHint(Constants.ENTER_EMAIL).build()
+                ).setScope(initialConfiguration.scope).setPrompt("login").build()
             chooseOperationAndProcess()
         } ?: kotlin.run {
             handleErrorAndFinishActivity(Exception(Constants.CLIENT_ID_NULL))
@@ -369,10 +365,10 @@ class LoginActivity : Activity() {
                     handleTokenResponseCallback
                 )
             } ?: kotlin.run {
-                handleErrorAndFinishActivity(Exception("email login response is null"))
+                handleErrorAndFinishActivity(Exception(Constants.EMAIL_LOGIN_RESPONSE_NULL))
             }
         } else {
-            handleErrorAndFinishActivity(Exception("email login response is null"))
+            handleErrorAndFinishActivity()
         }
     }
 
