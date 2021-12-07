@@ -369,10 +369,10 @@ class LoginActivity : Activity() {
                     handleTokenResponseCallback
                 )
             } ?: kotlin.run {
-                handleErrorAndFinishActivity(Exception("email login response is null"))
+                handleErrorAndFinishActivity(Exception(Constants.EMAIL_LOGIN_RESPONSE_NULL))
             }
         } else {
-            handleErrorAndFinishActivity(Exception("email login response is null"))
+            handleErrorAndFinishActivity(Exception(""))
         }
     }
 
