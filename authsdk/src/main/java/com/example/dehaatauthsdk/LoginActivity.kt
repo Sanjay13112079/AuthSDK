@@ -75,11 +75,7 @@ class LoginActivity : Activity() {
             databaseEnabled = true
             domStorageEnabled = true
             javaScriptEnabled = true
-            loadWithOverviewMode = true
-            useWideViewPort = true
             layoutAlgorithm = WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING
-            javaScriptEnabled = true
-            useWideViewPort = true
             loadWithOverviewMode = true
             pluginState = WebSettings.PluginState.ON
             setAppCacheEnabled(true)
@@ -372,7 +368,7 @@ class LoginActivity : Activity() {
                 handleErrorAndFinishActivity(Exception(Constants.EMAIL_LOGIN_RESPONSE_NULL))
             }
         } else {
-            handleErrorAndFinishActivity(Exception(""))
+            handleErrorAndFinishActivity()
         }
     }
 
