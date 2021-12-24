@@ -18,6 +18,7 @@ class DeHaatAuth {
     private var mobileNumber = "9897646336"
     private var otp = "1234"
     private var clientId: String
+    private var isDebugMode: Boolean = false
     private var operationState: OperationState
 
     private constructor(builder: MobileLoginBuilder) {
@@ -25,18 +26,21 @@ class DeHaatAuth {
         mobileNumber = builder.mobileNumber
         otp = builder.otp
         clientId = builder.clientId
+        isDebugMode = builder.isDebugMode
         loginResponseCallback = builder.loginResponseCallback
     }
 
     private constructor(builder: EmailLoginBuilder) {
         operationState = OperationState.EMAIL_LOGIN
         clientId = builder.clientId
+        isDebugMode = builder.isDebugMode
         loginResponseCallback = builder.loginResponseCallback
     }
 
     private constructor(builder: RenewTokenBuilder) {
         operationState = OperationState.RENEW_TOKEN
         clientId = builder.clientId
+        isDebugMode = builder.isDebugMode
         refreshToken = builder.refreshToken
         loginResponseCallback = builder.loginResponseCallback
     }
@@ -44,6 +48,7 @@ class DeHaatAuth {
     private constructor(builder: LogoutBuilder) {
         operationState = OperationState.LOGOUT
         clientId = builder.clientId
+        isDebugMode = builder.isDebugMode
         idToken = builder.idToken
         logoutResponseCallback = builder.logoutCallback
     }
@@ -64,6 +69,8 @@ class DeHaatAuth {
 
     fun getClientId() = clientId
 
+    fun getIsDebugMode() = isDebugMode
+
     companion object {
 
         class MobileLoginBuilder {
@@ -71,6 +78,7 @@ class DeHaatAuth {
             var mobileNumber = "9897646336"
             var otp = "1234"
             lateinit var clientId: String
+            var isDebugMode: Boolean = false
 
             fun mobile(number: String): MobileLoginBuilder {
                 this.mobileNumber = number
@@ -87,6 +95,10 @@ class DeHaatAuth {
                 return this
             }
 
+            fun enableDebugMode(){
+                isDebugMode =true
+            }
+
             fun responseCallback(loginResponseCallback: LoginResponseCallback): MobileLoginBuilder {
                 this.loginResponseCallback = loginResponseCallback
                 return this
@@ -98,10 +110,15 @@ class DeHaatAuth {
         class EmailLoginBuilder {
             lateinit var loginResponseCallback: LoginResponseCallback
             lateinit var clientId: String
+            var isDebugMode: Boolean = false
 
             fun clientId(clientId: String): EmailLoginBuilder {
                 this.clientId = clientId
                 return this
+            }
+
+            fun enableDebugMode(){
+                isDebugMode =true
             }
 
             fun responseCallback(loginResponseCallback: LoginResponseCallback): EmailLoginBuilder {
@@ -116,6 +133,7 @@ class DeHaatAuth {
             lateinit var loginResponseCallback: LoginResponseCallback
             lateinit var refreshToken: String
             lateinit var clientId: String
+            var isDebugMode:Boolean = false
 
             fun refreshToken(refreshToken: String): RenewTokenBuilder {
                 this.refreshToken = refreshToken
@@ -125,6 +143,10 @@ class DeHaatAuth {
             fun clientId(clientId: String): RenewTokenBuilder {
                 this.clientId = clientId
                 return this
+            }
+
+            fun enableDebugMode(){
+                isDebugMode =true
             }
 
             fun responseCallback(loginResponseCallback: LoginResponseCallback): RenewTokenBuilder {
@@ -139,6 +161,7 @@ class DeHaatAuth {
             lateinit var logoutCallback: LogoutCallback
             lateinit var idToken: String
             lateinit var clientId: String
+            var isDebugMode:Boolean = false
 
             fun idToken(idToken: String): LogoutBuilder {
                 this.idToken = idToken
@@ -148,6 +171,10 @@ class DeHaatAuth {
             fun clientId(clientId: String): LogoutBuilder {
                 this.clientId = clientId
                 return this
+            }
+
+            fun enableDebugMode(){
+                isDebugMode =true
             }
 
             fun responseCallback(logoutCallback: LogoutCallback): LogoutBuilder {
