@@ -12,6 +12,7 @@ import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.dehaatauthsdk.ClientInfo.getAuthClientInfo
 import com.example.dehaatauthsdk.DeHaatAuth.OperationState.*
@@ -21,8 +22,27 @@ import net.openid.appauth.*
 import net.openid.appauth.AuthorizationException.AuthorizationRequestErrors
 import net.openid.appauth.AuthorizationService.TokenResponseCallback
 
-class LoginActivity : AuthBaseActivity() {
+class LoginActivity : AppCompatActivity() {
 
+    private lateinit var mAuthService: AuthorizationService
+
+    private var _initialConfiguration: Configuration? = null
+    private val initialConfiguration get() = _initialConfiguration!!
+
+    private var _mAuthServiceConfiguration: AuthorizationServiceConfiguration? = null
+    private val mAuthServiceConfiguration get() = _mAuthServiceConfiguration!!
+    private var _mAuthRequest: AuthorizationRequest? = null
+    private val mAuthRequest get() = _mAuthRequest!!
+    private var _mLogoutRequest: EndSessionRequest? = null
+    private val mLogoutRequest get() = _mLogoutRequest!!
+
+    private var _webView: WebView? = null
+    private val webView get() = _webView!!
+
+    private var isPageLoaded = false
+    private lateinit var timeoutHandler: Handler
+    private val TIMEOUT = 30L
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("ACTIVITY STATE","onCreate was called")
@@ -155,6 +175,12 @@ class LoginActivity : AuthBaseActivity() {
         runOnUiThread {
             loadUrl(authUrl)
         }
+
+    private fun disposeCurrentServiceIfExist() {
+        if (::mAuthService.isInitialized) {
+            mAuthService.dispose()
+        }
+    }
 
     inner class MyWebViewClient : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -392,6 +418,17 @@ class LoginActivity : AuthBaseActivity() {
             }
         }
         finish()
+    }
+
+    override fun onDestroy() {
+        mAuthService.dispose()
+        _webView = null
+        _initialConfiguration = null
+        _mLogoutRequest = null
+        _mAuthRequest = null
+        _mAuthServiceConfiguration = null
+        ClientInfo.setAuthSDK(null)
+        super.onDestroy()
     }
 
     companion object {
