@@ -223,10 +223,16 @@ class DeHaatAuth {
         if (getAuthClientInfo() == null) {
             ClientInfo.setAuthClientInfo(this)
             getAuthClientInfo()?.let {
-                if (operationState == OperationState.RENEW_TOKEN)
-                    RenewTokenHandler(context, it.clientId, it.isDebugMode).startRenewProcess()
-                else
-                    context.startActivity(Intent(context, LoginActivity::class.java))
+                when (operationState) {
+                    OperationState.RENEW_TOKEN ->
+                        RenewTokenHandler(context, it.clientId, it.isDebugMode).startRenewProcess()
+
+                    OperationState.EMAIL_LOGIN ->
+                        context.startActivity(Intent(context, WebViewLoginActivity::class.java))
+
+                    else ->
+                        context.startActivity(Intent(context, LoginActivity::class.java))
+                }
                 true
             } ?: false
         } else false
